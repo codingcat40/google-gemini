@@ -3,3 +3,5 @@
 
 <!-- Front end dependencies -->
 --> toastify, react-router-dom, tailwind css
+--> gemini api, react-markdown library for formatting
+
