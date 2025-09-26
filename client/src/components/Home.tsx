@@ -4,11 +4,16 @@ import ReactMarkdown from 'react-markdown'
 import Loading from "./Loading";
 
 const Home = () => {
-  const [prompt, setPrompt] = useState<string>("");
-  const [responseHistory, setResponseHistory] = useState<Array<string | undefined>>([]);
-  const [history, setHistory] = useState<Array<string | undefined>>([]);
-  const [loading, setLoading] = useState<boolean>(false);
 
+  type chatInfo = {
+    prompt: string,
+    response: string | undefined,
+  }
+
+
+  const [prompt, setPrompt] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [chatInfo, setChatInfo] = useState<chatInfo[]>([])
 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -20,10 +25,8 @@ const Home = () => {
       model: "gemini-2.5-flash",
       contents: prompt,
     });
-
     console.log(response.text);
-    setHistory(prev => [...prev, prompt])
-    setResponseHistory(prev => [...prev, response.text])
+    setChatInfo([...chatInfo, {prompt, response:response.text}])
     setLoading(false)
   };
 
@@ -36,9 +39,9 @@ const Home = () => {
         <span>Request History</span>
         <ul className="flex flex-col space-y-8 bg-gray-200 h-full overflow-y-auto">
           {
-          history.length > 0 ? 
-            history.map((item, index) => {
-              return <li className="italic" key={index}>{item}</li>
+          chatInfo.length > 0 ? 
+            chatInfo.map((item, index) => {
+              return <li className="italic" key={index}>{item.prompt}</li>
             })
             : <span>Nothing to show here</span>  
         }
@@ -51,14 +54,18 @@ const Home = () => {
         {/* Chat box */}
         <div className="flex-1 rounded-2xl border min-h-[400px] md:min-h-[648px] flex text-center justify-center overflow-y-auto">
           {
-            loading ? <Loading /> :
-            responseHistory.length > 0 ? 
+            
+            chatInfo.length > 0 ? 
             <div className="flex flex-col gap-12 overflow-y-auto w-full">
                 {
-                  responseHistory.map((item, index) => {
-                    return <ReactMarkdown key={index}>
-                        {item}
-                    </ReactMarkdown>
+                  chatInfo.map((item, index) => {
+                    return <div className="gap-4">
+                      <p className="text-right justify-end text-lg">{item.prompt}</p>
+                      {/* {loading && <Loading />} */}
+                      <p className="text-left justify-start max-w-[60%] text-sm">
+                      <ReactMarkdown key={index}>
+                        {item.response}
+                    </ReactMarkdown></p></div>
                   })
                 }
             </div> : <span className="mt-24 text-xl">Welcome to gemini 2.5, How can I help you today :)</span>
@@ -76,10 +83,14 @@ const Home = () => {
             placeholder="Ask Anything..."
           />
           <button
-            className="bg-black text-white px-6 py-2 rounded-2xl md:w-auto w-full"
+            className="bg-black text-white px-6 py-2 rounded-2xl md:w-auto w-full cursor-pointer shadow-xl hover:px-8 hover:py-3 transition-all duration-400"
             onClick={handleSubmit}
           >
-            Send
+          {
+            loading ? <Loading /> : "Send"
+          
+            
+          }
           </button>
         </div>
       </div>
