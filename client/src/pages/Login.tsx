@@ -6,8 +6,16 @@ export const Login = () => {
   const [password, setPassword] = useState<string>("");
   const navigate = useNavigate()
 
+
+  const validate = () => {
+    if(username === "" || password === ""){
+      alert('Empty Fields not allowed.')
+    }
+  }
+
   const onHandleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    validate()
   };
 
   return (
