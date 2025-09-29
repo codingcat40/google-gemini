@@ -8,12 +8,24 @@ const Navbar = () => {
   }
 
   return (
-    <div className='flex flex-row justify-end bg-black text-white min-h-12 shadow-2xl'>
-        <ul className='flex flex-row gap-6 my-3 mx-6'>
-             <Link to='/about'><li>About Me</li></Link>
-             <li className='cursor-pointer' onClick={handleLogout}>Logout</li>
-        </ul>
-    </div>
+    <nav className="fixed top-0 left-0 w-full flex items-center justify-end bg-black text-white shadow-2xl z-50 h-14">
+  <ul className="flex flex-row gap-6 mr-6">
+    <li>
+      <Link to="/about" className="hover:text-gray-300 transition">
+        About Me
+      </Link>
+    </li>
+    <li
+      className="cursor-pointer hover:text-red-400 transition"
+      onClick={handleLogout}
+    >
+      Logout
+    </li>
+  </ul>
+</nav>
+
+
+
   )
 }
 

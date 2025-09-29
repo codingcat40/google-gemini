@@ -31,10 +31,8 @@ const Home = () => {
   };
 
 
-
-
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen pt-14">
       <div className="hidden md:block flex-col w-64 border-r p-4">
         <span>Request History</span>
         <ul className="flex flex-col space-y-8 bg-gray-200 h-full overflow-y-auto">
