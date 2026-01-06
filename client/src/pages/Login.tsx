@@ -10,6 +10,7 @@ export const Login = () => {
   const validate = () => {
     if(username === "" || password === ""){
       alert('Empty Fields not allowed.')
+      // I will use a library instead alerts
     }
   }
 
