@@ -1,6 +1,8 @@
 const User = require('../models/userModel.js')
 
 
+
+// controller function for creating user
 exports.createUser = async (req, res) =>  {
     try{
         const {username, email, password} = req.body;
@@ -8,7 +10,15 @@ exports.createUser = async (req, res) =>  {
             return res.status(400).json({message: 'One or more fields are empty'})
 
         }
-        const user = User.create({
+        
+        const existingUser = User.findOne({username: username})
+        if(existingUser){
+            return res.status(409).json({
+                message:  "Username already exists"
+            });
+        }
+        
+        const user = await User.create({
             username,
             email,
             password,
@@ -20,3 +30,7 @@ exports.createUser = async (req, res) =>  {
         res.status(500).json({'message':  'Server error occured'})
     }
 }
+
+
+
+// login controller function

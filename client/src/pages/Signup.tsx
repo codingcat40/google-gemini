@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export const Signup = () => {
   const [username, setUsername] = useState<string>("");
@@ -7,9 +8,23 @@ export const Signup = () => {
   const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
 
+  const sendRequest = async () =>  {
+    axios.post("http://localhost:3000/api/users/createuser", {
+      username,
+      email,
+      password,
+    }).then((res) =>  {
+      console.log(res.statusText)
+    }).catch((err) =>{
+      console.log(err)
+    })
+  }
+
   const onHandleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     validate();
+    sendRequest();
+    
   };
 
   const validate = () => {
