@@ -13,7 +13,7 @@ export const Signup = () => {
       username,
       email,
       password,
-    }).then((res) =>  {
+    }, {withCredentials:   true}).then((res) =>  {
       console.log(res.statusText)
     }).catch((err) =>{
       console.log(err)

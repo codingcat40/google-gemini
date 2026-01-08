@@ -36,10 +36,15 @@ exports.createUser = async (req, res) =>  {
             password: hashedPassword,
         })
 
-        res.status(201).json({'message': 'User Registered successfully'}, user)
+        const token = generateToken({userId: user._id});
+        res.cookie("token", token, {httpOnly:true})
+
+
+        res.status(201).json({message: 'User Registered successfully', userId: user._id})
+       
     }
     catch(err){
-        res.status(500).json({'message':  'Server error occured'})
+        res.status(500).json({message:  'Server error occured'})
     }
 }
 
@@ -54,12 +59,12 @@ exports.login = async (req, res) => {
         const user = await User.findOne({username:  username})
         if(!user){
             return res.status(401).json({
-                'message': "User does not exist"
+                message: "User does not exist"
             })
         }
         const checkPassword = await comparePassword(password, user.password)
         if(!checkPassword){
-            return res.status(401).json({'message': 'passwords do not match'})
+            return res.status(401).json({message: 'passwords do not match'})
         }
 
         const token = generateToken({id: user._id, username: user.username})
@@ -68,6 +73,6 @@ exports.login = async (req, res) => {
         return res.status(200).json({message: 'Login Successfull', token})
     }
     catch(err){
-        res.status(500).json({'message': 'Server error!'})
+        res.status(500).json({message: 'Server error!'})
     }
 }
