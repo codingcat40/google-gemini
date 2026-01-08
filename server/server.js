@@ -8,11 +8,12 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 4000
 
+// middlewares for cors and parsing incoming JSON requests
 app.use(cors())
 app.use(express.json())
 
 // user router
-app.use('/api/users', userRoute)
+app.use('/api/auth', userRoute)
 
 mongoose.connect(process.env.MONGO_URI).then(() =>{
     console.log("MongoDB Connected")

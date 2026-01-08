@@ -9,7 +9,7 @@ export const Signup = () => {
   const navigate = useNavigate();
 
   const sendRequest = async () =>  {
-    axios.post("http://localhost:3000/api/users/createuser", {
+    axios.post("http://localhost:3000/api/auth/createuser", {
       username,
       email,
       password,

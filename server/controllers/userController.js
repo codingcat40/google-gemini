@@ -1,5 +1,6 @@
-const User = require('../models/userModel.js')
-
+const User = require('../models/userModel.js');
+const {hashPassword, comparePassword} = require('../service/hashService.js');
+const { generateToken } = require('../service/jwtService.js');
 
 
 // controller function for creating user
@@ -11,20 +12,31 @@ exports.createUser = async (req, res) =>  {
 
         }
         
-        const existingUser = User.findOne({username: username})
+        const existingUser = await User.findOne({username: username})
         if(existingUser){
             return res.status(409).json({
                 message:  "Username already exists"
             });
         }
-        
+
+    
+        const existingEmail = await User.findOne({email: email})
+        if(existingEmail){
+            return res.status(409).json({
+                message: "provide email which is not in use."
+            })
+        }
+
+
+        const hashedPassword = await hashPassword(password)
+
         const user = await User.create({
             username,
             email,
-            password,
+            password: hashedPassword,
         })
 
-        res.status(201).json({'message': 'Form submitted successfully'}, user)
+        res.status(201).json({'message': 'User Registered successfully'}, user)
     }
     catch(err){
         res.status(500).json({'message':  'Server error occured'})
@@ -34,3 +46,28 @@ exports.createUser = async (req, res) =>  {
 
 
 // login controller function
+
+exports.login = async (req, res) => {
+    try{
+       
+        const {username, password} = req.body;
+        const user = await User.findOne({username:  username})
+        if(!user){
+            return res.status(401).json({
+                'message': "User does not exist"
+            })
+        }
+        const checkPassword = await comparePassword(password, user.password)
+        if(!checkPassword){
+            return res.status(401).json({'message': 'passwords do not match'})
+        }
+
+        const token = generateToken({id: user._id, username: user.username})
+
+        // res.status(200)
+        return res.status(200).json({message: 'Login Successfull', token})
+    }
+    catch(err){
+        res.status(500).json({'message': 'Server error!'})
+    }
+}

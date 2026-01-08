@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -6,6 +7,10 @@ export const Login = () => {
   const [password, setPassword] = useState<string>("");
   const navigate = useNavigate()
 
+
+  const sendRequest = async () =>  {
+    await axios.post("http://localhost:3000/api/auth/login", {username,password})
+  }
 
   const validate = () => {
     if(username === "" || password === ""){
@@ -17,6 +22,7 @@ export const Login = () => {
   const onHandleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     validate()
+    sendRequest()
   };
 
   return (
