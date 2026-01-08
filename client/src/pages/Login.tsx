@@ -10,6 +10,8 @@ export const Login = () => {
 
   const sendRequest = async () =>  {
     await axios.post("http://localhost:3000/api/auth/login", {username,password})
+    console.log('Logged In Successfully')
+    navigate('/home')
   }
 
   const validate = () => {
