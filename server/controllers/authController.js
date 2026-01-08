@@ -67,10 +67,11 @@ exports.login = async (req, res) => {
             return res.status(401).json({message: 'passwords do not match'})
         }
 
-        const token = generateToken({id: user._id, username: user.username})
+        const token = generateToken({userId: user._id})
+        res.cookie('token', token, {httpOnly: true})
 
         // res.status(200)
-        return res.status(200).json({message: 'Login Successfull', token})
+        return res.status(200).json({message: 'Login Successful', token})
     }
     catch(err){
         res.status(500).json({message: 'Server error!'})
