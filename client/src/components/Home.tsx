@@ -7,7 +7,7 @@ const Home = () => {
 
   type chatInfo = {
     prompt: string,
-    response: string | undefined,
+    response: string,
   }
 
 
@@ -26,39 +26,31 @@ const Home = () => {
       const res = await axios.post('http://localhost:3000/api/gemini/prompt', {
         prompt
       },{withCredentials:  true})
-      setChatInfo(prev => [...prev, {prompt, response: res.data.response}])
-      setPrompt("");
+
+
+      setChatInfo(prev => [...prev, {prompt, response: res.data.responseText}])
+      console.log(res.data)
 
     }catch(err){
       console.log(err)
-    }finally{setLoading(false)}
+    }finally{setLoading(false); console.log(chatInfo)}
 
 
   };
 
 
+ 
+
   return (
     <div className="flex h-screen pt-14">
-      <div className="hidden md:block flex-col w-64 border-r p-4">
-        <span>Request History</span>
-        <ul className="flex flex-col space-y-8 bg-gray-200 h-full overflow-y-auto">
-          {
-          chatInfo.length > 0 ? 
-            chatInfo.map((item, index) => {
-              return <li className="italic" key={index}>{item.prompt}</li>
-            })
-            : <span>Nothing to show here</span>  
-        }
-        </ul>
-
-      </div>
+    
 
       {/* Main Content */}
       <div className="flex-1 bg-white p-4 md:p-6 flex flex-col">
         {/* Chat box */}
         <div className="flex-1 rounded-2xl border min-h-[400px] md:min-h-[648px] flex text-center justify-center overflow-y-auto">
           {
-            
+           
             chatInfo.length > 0 ? 
             <div className="flex flex-col gap-12 overflow-y-auto w-full">
                 {

@@ -1,5 +1,5 @@
 const axios = require('axios')
-const GoogleGenAI = require('@google/genai')
+const {GoogleGenAI} = require('@google/genai')
 
 module.exports.callGemini = async (prompt) => {
         const key = process.env.API_KEY

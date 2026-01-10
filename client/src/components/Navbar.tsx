@@ -1,9 +1,13 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import axios from 'axios'
 
 const Navbar = () => {
-  const handleLogout = (e: React.MouseEvent<HTMLLIElement>) => {
+  const navigate = useNavigate();
+  const handleLogout = async (e: React.MouseEvent<HTMLLIElement>) => {
     e.preventDefault();
+    await axios.post("http://localhost:3000/api/auth/logout",{},{withCredentials:true})
+    navigate('/')
 
   }
 

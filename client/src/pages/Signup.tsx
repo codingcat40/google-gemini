@@ -42,7 +42,7 @@ export const Signup = () => {
     >
       <div className="w-full max-w-md p-8 rounded-2xl shadow-lg bg-black/15 backdrop-blur-sm">
         <h2 className="text-2xl font-semibold text-white mb-6 text-center">
-          Sign Up
+          Register
         </h2>
 
         <form className="flex flex-col space-y-5">
@@ -98,7 +98,7 @@ export const Signup = () => {
             onClick={onHandleSubmit}
             className="w-full py-2 mt-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
           >
-            Sign In
+            Register
           </button>
           <p className="text-white font-serif">
             Are You existing User, You can Sign In{" "}

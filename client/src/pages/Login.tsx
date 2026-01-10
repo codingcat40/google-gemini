@@ -9,7 +9,7 @@ export const Login = () => {
 
 
   const sendRequest = async () =>  {
-    await axios.post("http://localhost:3000/api/auth/login", {username,password})
+    await axios.post("http://localhost:3000/api/auth/login", {username,password}, {withCredentials: true})
     console.log('Logged In Successfully')
     navigate('/home')
   }
