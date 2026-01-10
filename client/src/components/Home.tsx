@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { GoogleGenAI } from "@google/genai";
 import ReactMarkdown from 'react-markdown'
 import Loading from "./Loading";
+import axios from "axios";
 
 const Home = () => {
 
@@ -17,17 +17,23 @@ const Home = () => {
 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    if(prompt.length === 0){
+      return;
+    }
     setLoading(true)
-    const key = import.meta.env.VITE_API_KEY;
-    const ai = new GoogleGenAI({ apiKey: key });
+    
+    try{
+      const res = await axios.post('http://localhost:3000/api/gemini/prompt', {
+        prompt
+      },{withCredentials:  true})
+      setChatInfo(prev => [...prev, {prompt, response: res.data.response}])
+      setPrompt("");
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-    });
-    console.log(response.text);
-    setChatInfo([...chatInfo, {prompt, response:response.text}])
-    setLoading(false)
+    }catch(err){
+      console.log(err)
+    }finally{setLoading(false)}
+
+
   };
 
 

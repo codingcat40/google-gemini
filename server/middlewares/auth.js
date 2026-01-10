@@ -8,7 +8,8 @@ module.exports = (req, res, next) => {
     }
 
     try{
-        req.user = verifyToken(token)
+        const decoded = verifyToken(token)
+        req.userId = decoded.userId
         next()
     }catch(err){
         res.status(401).json({message: 'Invalid Token'});

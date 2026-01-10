@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import cors from 'cors'
 import mongoose from 'mongoose';
 import userRoute from './routes/userRoutes.js'
+import geminiRoute from './routes/geminiRoutes.js'
 import cookieParser from 'cookie-parser';
 
 dotenv.config();
@@ -23,6 +24,10 @@ app.use(cookieParser());
 
 // user router
 app.use('/api/auth', userRoute)
+
+// home
+app.use("/api/gemini",geminiRoute)
+
 
 mongoose.connect(process.env.MONGO_URI).then(() =>{
     console.log("MongoDB Connected")
