@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactMarkdown from 'react-markdown'
 import Loading from "./Loading";
 import axios from "axios";
@@ -29,7 +29,7 @@ const Home = () => {
 
 
       setChatInfo(prev => [...prev, {prompt, response: res.data.responseText}])
-      console.log(res.data)
+      setPrompt("");
 
     }catch(err){
       console.log(err)
@@ -38,12 +38,34 @@ const Home = () => {
 
   };
 
+ useEffect(() => {
+    fetchAllData()
+  },[])
 
+  const fetchAllData = async () =>  {
+    const response = await axios.get("http://localhost:3000/api/gemini/history", {withCredentials:true});
+    console.log(response);
+    setChatInfo(response.data.data)
+  }
+ 
  
 
   return (
     <div className="flex h-screen pt-14">
-    
+      <div className="hidden md:block flex-col w-64 border-r p-4">
+        <span>Request History</span>
+        <ul className="flex flex-col space-y-8 bg-gray-200 h-full overflow-y-auto">
+          {
+     
+          chatInfo.length > 0 ? 
+            chatInfo.map((item, index) => {
+              return <li className="italic" key={index}>{item.prompt}</li>
+            })
+            : <span>Nothing to show here</span>  
+        }
+        </ul>
+
+      </div>
 
       {/* Main Content */}
       <div className="flex-1 bg-white p-4 md:p-6 flex flex-col">
