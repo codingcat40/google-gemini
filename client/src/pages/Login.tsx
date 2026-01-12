@@ -1,16 +1,22 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export const Login = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  
+  const {setUser} = useAuth()
+
   const navigate = useNavigate()
 
 
   const sendRequest = async () =>  {
-    await axios.post("http://localhost:3000/api/auth/login", {username,password}, {withCredentials: true})
+    const res = await axios.post("http://localhost:3000/api/auth/login", {username,password}, {withCredentials: true})
     console.log('Logged In Successfully')
+    setUser(res.data.user)
+    console.log('Login page data', res.data.user)
     navigate('/home')
   }
 

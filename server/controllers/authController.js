@@ -1,7 +1,6 @@
 const User = require('../models/userModel.js');
 const {hashPassword, comparePassword} = require('../service/hashService.js');
-const { generateToken } = require('../service/jwtService.js');
-
+const { generateToken, verifyToken } = require('../service/jwtService.js');
 
 // controller function for creating user
 exports.createUser = async (req, res) =>  {
@@ -44,7 +43,7 @@ exports.createUser = async (req, res) =>  {
        
     }
     catch(err){
-        res.status(500).json({message:  'Server error occured'})
+        return res.status(500).json({message:  'Server error occured'})
     }
 }
 
@@ -71,7 +70,11 @@ exports.login = async (req, res) => {
         res.cookie('token', token, {httpOnly: true})
 
         // res.status(200)
-        return res.status(200).json({message: 'Login Successful', token})
+        return res.status(200).json({message: 'Login Successful', user:  {
+            id:  user._id,
+            username: user.username,
+            email: user.email,
+        }})
     }
     catch(err){
         res.status(500).json({message: 'Server error!'})
@@ -93,4 +96,26 @@ exports.logout = async (req, res) => {
     catch(err){
         return res.status(500).json({message: "Logout failed"})
     }
+}
+
+
+exports.getUserData = async (req, res) => {
+
+    try{
+    const token = req.cookies.token
+
+    if(!token){
+        return res.status(200).json({user:null})
+    }
+    const decoded = verifyToken(token, process.env.JWT_SECRET)
+    console.log(decoded)
+
+    return res.status(200).json({
+        user:{
+            id:  decoded.userId,
+        }
+    })
+}catch(err){
+    return res.status(200).json({user: null})
+}
 }

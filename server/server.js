@@ -2,7 +2,7 @@ import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
 import mongoose from 'mongoose';
-import userRoute from './routes/userRoutes.js'
+import authRoutes from './routes/authRoutes.js'
 import geminiRoute from './routes/geminiRoutes.js'
 import cookieParser from 'cookie-parser';
 
@@ -23,7 +23,7 @@ app.use(cookieParser());
 
 
 // user router
-app.use('/api/auth', userRoute)
+app.use('/api/auth', authRoutes)
 
 // home
 app.use("/api/gemini",geminiRoute)
