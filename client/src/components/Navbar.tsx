@@ -12,7 +12,7 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="fixed top-0 left-0 w-full flex items-center justify-end bg-black text-white shadow-2xl z-50 h-14">
+    <nav className="sticky top-0 left-0 text-lg w-full flex items-center justify-end bg-black text-white shadow-2xl z-50 h-18">
   <ul className="flex flex-row gap-6 mr-6">
     <li>
       <Link to="/about" className="hover:text-gray-300 transition">

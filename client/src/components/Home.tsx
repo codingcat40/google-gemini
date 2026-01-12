@@ -13,6 +13,7 @@ const Home = () => {
 
   const [prompt, setPrompt] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+
   const [chatInfo, setChatInfo] = useState<chatInfo[]>([])
 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -51,68 +52,77 @@ const Home = () => {
  
 
   return (
-    <div className="flex h-screen pt-14">
-      <div className="hidden md:block flex-col w-64 border-r p-4">
-        <span>Request History</span>
-        <ul className="flex flex-col space-y-8 bg-gray-200 h-full overflow-y-auto">
-          {
-          chatInfo &&
-          chatInfo.length > 0 ? 
-            chatInfo.map((item, index) => {
-              return <li className="italic" key={index}>{item.prompt}</li>
-            })
-            : <span>Nothing to show here</span>  
-        }
-        </ul>
+   <div className="flex h-screen overflow-hidden">
+  {/* Sidebar */}
+  <aside className="hidden md:flex w-64 flex-col border-r p-4">
+    <span className="text-lg font-semibold">Request History</span>
+    <hr className="my-2" />
 
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 bg-white p-4 md:p-6 flex flex-col">
-        {/* Chat box */}
-        <div className="flex-1 rounded-2xl border min-h-[400px] md:min-h-[648px] flex text-center justify-center overflow-y-auto">
-          {
-           chatInfo &&
-            chatInfo.length > 0 ? 
-            <div className="flex flex-col gap-12 overflow-y-auto w-full">
-                {
-                  chatInfo.map((item, index) => {
-                    return <div className="gap-4">
-                      <p className="text-right justify-end text-lg">{item.prompt}</p>
-                      {/* {loading && <Loading />} */}
-                      <p className="text-left justify-start max-w-[60%] text-sm">
-                      <ReactMarkdown key={index}>
-                        {item.response}
-                    </ReactMarkdown></p></div>
-                  })
-                }
-            </div> : <span className="mt-24 text-xl">Welcome to gemini 2.5, How can I help you today :)</span>
-          }
-        </div>
-
-        {/* Input area */}
-        <div className="flex flex-col md:flex-row items-stretch gap-2 mt-4">
-          <textarea
-            className="flex-1 bg-red-100 rounded-2xl p-2 resize-none min-h-[100px] md:min-h-[60px]"
-            value={prompt}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-              setPrompt(e.target.value)
-            }
-            placeholder="Ask Anything..."
-          />
-          <button
-            className="bg-black text-white px-6 py-2 rounded-2xl md:w-auto w-full cursor-pointer shadow-xl hover:px-8 hover:py-3 transition-all duration-400"
-            onClick={handleSubmit}
+    <ul className="flex-1 overflow-y-auto space-y-3 mt-4">
+      {chatInfo && chatInfo.length > 0 ? (
+        chatInfo.map((item, index) => (
+          <li
+            key={index}
+            className="text-sm italic truncate cursor-pointer hover:text-black text-gray-600"
           >
-          {
-            loading ? <Loading /> : "Send"
-          
-            
-          }
-          </button>
+            {item.prompt}
+          </li>
+        ))
+      ) : (
+        <span className="text-sm text-gray-500">Nothing to show here</span>
+      )}
+    </ul>
+  </aside>
+
+  {/* Main Content */}
+  <main className="flex flex-1 flex-col bg-white p-3 md:p-6">
+    {/* Chat Area */}
+    <div className="flex-1 overflow-y-auto rounded-2xl border p-4">
+      {chatInfo && chatInfo.length > 0 ? (
+        <div className="flex flex-col gap-6">
+          {chatInfo.map((item, index) => (
+            <div key={index} className="flex flex-col gap-3">
+              {/* User Message */}
+              <div className="self-end max-w-[85%] md:max-w-[60%] bg-black text-white px-4 py-2 rounded-2xl text-sm md:text-base">
+                {item.prompt}
+              </div>
+
+              {/* AI Response */}
+              <div className="self-start max-w-[90%] md:max-w-[70%] bg-gray-100 px-4 py-3 rounded-2xl text-sm">
+                <ReactMarkdown>{item.response}</ReactMarkdown>
+              </div>
+            </div>
+          ))}
         </div>
-      </div>
+      ) : (
+        <div className="h-full flex items-center justify-center text-gray-500 text-center text-base md:text-lg">
+          Welcome to Gemini 2.5 ✨ <br />
+          How can I help you today?
+        </div>
+      )}
     </div>
+
+    {/* Input Area */}
+    <div className="mt-3 flex flex-col md:flex-row gap-2">
+      <textarea
+        className="flex-1 resize-none rounded-2xl border p-3 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-black"
+        rows={2}
+        value={prompt}
+        onChange={(e) => setPrompt(e.target.value)}
+        placeholder="Ask anything..."
+      />
+
+      <button
+        onClick={handleSubmit}
+        className="rounded-2xl bg-black text-white px-6 py-2 text-sm md:text-base hover:scale-105 transition-transform disabled:opacity-50"
+        disabled={loading}
+      >
+        {loading ? <Loading /> : "Send"}
+      </button>
+    </div>
+  </main>
+</div>
+
   );
 };
 
