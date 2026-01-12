@@ -28,7 +28,7 @@ const Home = () => {
       },{withCredentials:  true})
 
 
-      setChatInfo(prev => [...prev, {prompt, response: res.data.responseText}])
+      setChatInfo((prev) => [...prev, {prompt, response: res.data.responseText}])
       setPrompt("");
 
     }catch(err){
@@ -56,7 +56,7 @@ const Home = () => {
         <span>Request History</span>
         <ul className="flex flex-col space-y-8 bg-gray-200 h-full overflow-y-auto">
           {
-     
+          chatInfo &&
           chatInfo.length > 0 ? 
             chatInfo.map((item, index) => {
               return <li className="italic" key={index}>{item.prompt}</li>
@@ -72,7 +72,7 @@ const Home = () => {
         {/* Chat box */}
         <div className="flex-1 rounded-2xl border min-h-[400px] md:min-h-[648px] flex text-center justify-center overflow-y-auto">
           {
-           
+           chatInfo &&
             chatInfo.length > 0 ? 
             <div className="flex flex-col gap-12 overflow-y-auto w-full">
                 {
