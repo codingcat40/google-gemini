@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 
-import {Space, Typography, Button, notification } from "antd";
+import { Button, notification } from "antd";
 
 type NotificationType =  "error" | "warning";
 
-const {Text, Link} = Typography;
+// const {Text, Link} = Typography;
 
 export const Signup = () => {
   const [username, setUsername] = useState<string>("");
