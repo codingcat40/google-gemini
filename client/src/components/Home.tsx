@@ -55,7 +55,7 @@ const Home = () => {
    <div className="flex h-screen overflow-hidden">
   {/* Sidebar */}
   <aside className="hidden md:flex w-64 flex-col border-r p-4">
-    <span className="text-lg font-semibold">Request History</span>
+    <span className="text-lg font-semibold">User Queries History</span>
     <hr className="my-2" />
 
     <ul className="flex-1 overflow-y-auto space-y-3 mt-4">

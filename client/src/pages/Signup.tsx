@@ -38,11 +38,11 @@ export const Signup = () => {
   return (
     <div
       className="flex pt-14 items-center justify-center z-10 h-screen overflow-y-hidden bg-cover bg-center"
-      style={{ backgroundImage: "url('/Logo.png')" }}
+      style={{ backgroundImage: "url('/Logo.webp')" }}
     >
-      <div className="w-full max-w-md p-8 rounded-2xl shadow-lg bg-black/15 backdrop-blur-sm">
+      <div className="w-full max-w-[420px] min-w-[120px] p-8 max-h-[455px] rounded-2xl shadow-lg  backdrop-blur-2xl m-8">
         <h2 className="text-2xl font-semibold text-white mb-6 text-center">
-          Register
+          Hello there :)
         </h2>
 
         <form className="flex flex-col space-y-5">
@@ -96,12 +96,12 @@ export const Signup = () => {
           <button
             type="submit"
             onClick={onHandleSubmit}
-            className="w-full py-2 mt-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            className="w-full cursor-pointer py-2 mt-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
           >
             Register
           </button>
           <p className="text-white font-serif">
-            Are You existing User, You can Sign In{" "}
+            Are You existing User?! You can Sign In{" "}
             <span className="text-blue-500 cursor-pointer text-lg" onClick={() => navigate('/')}>Here</span>{" "}
           </p>
         </form>
