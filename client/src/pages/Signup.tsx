@@ -2,11 +2,31 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+
+import {Space, Typography, Button, notification } from "antd";
+
+type NotificationType =  "error" | "warning";
+
+const {Text, Link} = Typography;
+
 export const Signup = () => {
   const [username, setUsername] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
+
+
+
+  // Notification
+    const [api, contextHolder] = notification.useNotification();
+    const openNotificationWithIcon = (type: NotificationType, message:string, title:string) => {
+      api[type]({
+        title: `${title}`,
+        description:
+          `${message}`,
+          duration:  5
+        });
+    };
 
   const sendRequest = async () =>  {
     axios.post("http://localhost:3000/api/auth/createuser", {
@@ -17,19 +37,24 @@ export const Signup = () => {
       console.log(res.statusText)
     }).catch((err) =>{
       console.log(err)
+      openNotificationWithIcon('error', `${err.response.status==409 ?  'Username or email already taken' :  
+        'There was an error signing up :('}`, 'Error')
     })
   }
 
   const onHandleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     validate();
-    sendRequest();
+    if(username &&  email && password){
+      sendRequest();
+    }
     
   };
 
   const validate = () => {
     if(username === "" || email === "" || password === ""){
-      alert('All fields are  required');
+      // alert('All fields are  required');
+      openNotificationWithIcon('warning','Please fill all the fields','Error')
 
     }
   }
@@ -40,6 +65,7 @@ export const Signup = () => {
       className="flex pt-14 items-center justify-center z-10 h-screen overflow-y-hidden bg-cover bg-center"
       style={{ backgroundImage: "url('/Logo.webp')" }}
     >
+      {contextHolder}
       <div className="w-full max-w-[420px] min-w-[120px] p-8 max-h-[455px] rounded-2xl shadow-lg  backdrop-blur-2xl m-8">
         <h2 className="text-2xl font-semibold text-white mb-6 text-center">
           Hello there :)
@@ -93,13 +119,13 @@ export const Signup = () => {
             />
           </div>
 
-          <button
-            type="submit"
-            onClick={onHandleSubmit}
-            className="w-full cursor-pointer py-2 mt-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          <Button
+          variant="solid"
+          color="blue"
+          onClick={onHandleSubmit}
           >
-            Register
-          </button>
+              Register
+          </Button>
           <p className="text-white font-serif">
             Are You existing User?! You can Sign In{" "}
             <span className="text-blue-500 cursor-pointer text-lg" onClick={() => navigate('/')}>Here</span>{" "}

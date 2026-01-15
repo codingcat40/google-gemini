@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthContext";
 
 import { Button, notification } from "antd";
 
-type NotificationType = "success" | "warning" | "error";
+type NotificationType =  "error" | "warning";
 
 export const Login = () => {
   const [username, setUsername] = useState<string>("");
@@ -44,7 +44,7 @@ export const Login = () => {
 
   const validate = () => {
     if (username === "" || password === "") {
-      openNotificationWithIcon('error', 'Username and Password can not be empty','Error')
+      openNotificationWithIcon('warning', 'Username and Password can not be empty','Error')
     }
   };
 
@@ -104,7 +104,7 @@ export const Login = () => {
           </div>
 
           <Button color="blue" variant="solid" onClick={onHandleSubmit}>
-            Sign Inn
+            Sign In
           </Button>
 
           <p className="text-white font-serif">
