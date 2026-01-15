@@ -3,37 +3,57 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
+import { Button, notification } from "antd";
+
+type NotificationType = "success" | "warning" | "error";
+
 export const Login = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-
   const { setUser } = useAuth();
 
   const navigate = useNavigate();
 
+  // Notification
+  const [api, contextHolder] = notification.useNotification();
+  const openNotificationWithIcon = (type: NotificationType, message:string, title:string) => {
+    api[type]({
+      title: `${title}`,
+      description:
+        `${message}`,
+        duration:  5
+      });
+  };
+
   const sendRequest = async () => {
-    const res = await axios.post(
-      "http://localhost:3000/api/auth/login",
-      { username, password },
-      { withCredentials: true }
-    );
-    console.log("Logged In Successfully");
-    setUser(res.data.user);
-    console.log("Login page data", res.data.user);
-    navigate("/home");
+    try {
+      const res = await axios.post(
+        "http://localhost:3000/api/auth/login",
+        { username, password },
+        { withCredentials: true }
+      );
+
+      setUser(res.data.user);
+      console.log("Login page data", res.data.user);
+      navigate("/home");
+    } catch (err) {
+      openNotificationWithIcon('error', `Incorrect Username or Password`,'Error')
+      console.log('Login Error: ' +  err);
+    }
   };
 
   const validate = () => {
     if (username === "" || password === "") {
-      alert("Empty Fields not allowed.");
-      // I will use a library instead alerts
+      openNotificationWithIcon('error', 'Username and Password can not be empty','Error')
     }
   };
 
   const onHandleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     validate();
-    sendRequest();
+    if(username &&  password){
+      sendRequest()
+    }
   };
 
   return (
@@ -41,6 +61,7 @@ export const Login = () => {
       className="flex pt-14 items-center justify-center min-h-screen z-10 overflow-hidden bg-cover bg-center"
       style={{ backgroundImage: "url('/Logo.webp')", backgroundSize: "cover" }}
     >
+      {contextHolder}
       <div className="w-full max-w-[420px] min-w-[120px] p-8 max-h-[455px] rounded-2xl shadow-lg  backdrop-blur-2xl m-8">
         <h2 className="text-2xl font-semibold text-white mb-6 text-center">
           Please Login here :)
@@ -82,13 +103,10 @@ export const Login = () => {
             />
           </div>
 
-          <button
-            type="submit"
-            onClick={onHandleSubmit}
-            className="w-full cursor-pointer py-2 mt-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-          >
-            Sign In
-          </button>
+          <Button color="blue" variant="solid" onClick={onHandleSubmit}>
+            Sign Inn
+          </Button>
+
           <p className="text-white font-serif">
             Are You a New User, You can Sign Up{" "}
             <span
