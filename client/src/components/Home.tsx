@@ -3,7 +3,7 @@ import ReactMarkdown from "react-markdown";
 import Loading from "./Loading";
 import axios from "axios";
 
-import { Flex, Layout } from "antd";
+import { Flex, Layout, Button } from "antd";
 const { Header, Footer, Sider, Content } = Layout;
 
 const contentStyle: React.CSSProperties = {
@@ -37,8 +37,8 @@ const footerStyle: React.CSSProperties = {
   height: "20vh",
   background: "#e7e2e2",
   display:'flex',
-  flexDirection: "row",
-  gap:'64px'
+  justifyContent:'space-between',
+  
 };
 
 const Home = () => {
@@ -58,7 +58,8 @@ const Home = () => {
       return;
     }
     setLoading(true);
-
+    
+    setChatInfo((prev) => [...prev, {prompt, response: ""}]);
     try {
       const res = await axios.post(
         "http://localhost:3000/api/gemini/prompt",
@@ -67,19 +68,55 @@ const Home = () => {
         },
         { withCredentials: true }
       );
-
-      setChatInfo((prev) => [
-        ...prev,
-        { prompt, response: res.data.responseText },
-      ]);
+      animateResponse(res.data.responseText)
+      // setChatInfo((prev) => [
+      //   ...prev,
+      //   { prompt, response: res.data.responseText },
+      // ]);
       setPrompt("");
+
     } catch (err) {
       console.log(err);
     } finally {
       setLoading(false);
-      console.log(chatInfo);
     }
   };
+
+
+ const animateResponse = (fullText: string) => {
+  if (typeof fullText !== "string") return;
+
+  const lines = fullText.split("\n");
+  let index = 0;
+
+  const tick = () => {
+    if (index >= lines.length) return;
+
+    const line = lines[index];
+    if (typeof line !== "string") return; // 🔒 HARD STOP
+
+    setChatInfo((prev) => {
+      const updated = [...prev];
+      const lastIndex = updated.length - 1;
+
+      updated[lastIndex] = {
+        ...updated[lastIndex],
+        response:
+          updated[lastIndex].response +
+          (updated[lastIndex].response ? "\n" : "") +
+          line,
+      };
+
+      return updated;
+    });
+
+    index++;
+    setTimeout(tick, 80);
+  };
+
+  tick();
+};
+
 
   useEffect(() => {
     fetchAllData();
@@ -138,7 +175,7 @@ const Home = () => {
                       </div>
 
                       {/* AI Response */}
-                      <div className="self-start max-w-[90%] md:max-w-[70%] bg-gray-100 px-4 py-3 rounded-2xl text-sm">
+                      <div className="self-start max-w-[90%] md:max-w-[70%] bg-[#fff] text-left px-4 py-3 rounded-2xl text-sm md:text-base">
                         <ReactMarkdown>{item.response}</ReactMarkdown>
                       </div>
                     </div>
@@ -155,7 +192,7 @@ const Home = () => {
             <Footer style={footerStyle}>
               {/* Input Area */}
               <textarea
-                className="min-w-[50rem] h-12 p-2"
+                className="sm:w-[10rem] md:w-[20rem] lg:w-[30rem] h-12 p-2"
                 rows={2}
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
@@ -163,11 +200,15 @@ const Home = () => {
               />
               <button
                 onClick={handleSubmit}
-                className="rounded-xl h-12 bg-black text-white px-6 py-2 text-sm md:text-base hover:scale-105 transition-transform disabled:opacity-50"
+                className="rounded-xl h-12 bg-black text-white px-6 py-2 text-sm md:text-base cursor-pointer"
                 disabled={loading}
               >
                 {loading ? <Loading /> : "Send"}
               </button>
+
+              {/* <Button onClick={handleSubmit} variant="solid" type="primary" color="geekblue">
+                {loading ?  <Loading />  :  "Send"}
+              </Button> */}
             </Footer>
           </Layout>
         </Layout>
