@@ -22,7 +22,7 @@ module.exports.SendAPIRequest = async (req, res) => {
 
          res.status(201).json({message: "Prompt has been sent", responseText});
     }catch(err){
-        res.status(500).json({message: "error creating gemini request!"})
+        res.status(500).json({message: "error creating gemini request!", err})
     }
 }
 
@@ -40,5 +40,22 @@ module.exports.getMyData = async (req, res) => {
     } catch (error) {
         console.error("gemini error: ",error)
         res.status(500).json({message: 'Error getting Gemini Data',data})
+    }
+}
+
+
+module.exports.deleteQuery = async (req, res) => {
+    try{
+        const {id} = req.params
+        if(!id){
+            return res.status(400).json({message:"Id is required"})
+        }
+        const deleted = await GeminiModel.findByIdAndDelete(id);
+        if(!deleted){
+            res.status(404).json({message: "Chat not found"})
+        }
+        res.status(200).json({message: "chat deleted successfully"})
+    }catch(err){
+        res.status(500).json({Error: 'error deleting'});
     }
 }

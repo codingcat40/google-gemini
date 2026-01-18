@@ -3,46 +3,14 @@ import ReactMarkdown from "react-markdown";
 import Loading from "./Loading";
 import axios from "axios";
 
-import { Flex, Layout, Button } from "antd";
-const { Header, Footer, Sider, Content } = Layout;
-
-const contentStyle: React.CSSProperties = {
-  textAlign: "right",
-  flex: 1,
-  justifySelf: "right",
-  overflowY: "auto",
-  padding: "16px",
-  lineHeight: "120px",
-};
-
-const siderStyle: React.CSSProperties = {
-  textAlign: "left",
-  lineHeight: "60px",
-  color: "#fff",
-  background: "#1b1b1c",
-  overflowY: "auto",
-  // height:'100vh'
-};
-
-const layoutStyle: React.CSSProperties = {
-  borderRadius: 8,
-  overflow: "hidden",
-  width: "100%",
-  height: "100vh",
-};
-
-const footerStyle: React.CSSProperties = {
-  textAlign: "right",
-  color: "black",
-  height: "20vh",
-  background: "#e7e2e2",
-  display:'flex',
-  justifyContent:'space-between',
-  
-};
+import { Button, Flex, Layout, Modal, message } from "antd";
+import { DeleteOutlined, ExclamationCircleFilled } from "@ant-design/icons";
+const { Footer, Sider, Content } = Layout;
+const { confirm } = Modal;
 
 const Home = () => {
   type chatInfo = {
+    _id: string; // backend using _id
     prompt: string;
     response: string;
   };
@@ -51,15 +19,15 @@ const Home = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const [chatInfo, setChatInfo] = useState<chatInfo[]>([]);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    if (prompt.length === 0) {
+    if (prompt.trim().length === 0) {
       return;
     }
     setLoading(true);
-    
-    setChatInfo((prev) => [...prev, {prompt, response: ""}]);
+
     try {
       const res = await axios.post(
         "http://localhost:3000/api/gemini/prompt",
@@ -68,152 +36,182 @@ const Home = () => {
         },
         { withCredentials: true }
       );
-      animateResponse(res.data.responseText)
-      // setChatInfo((prev) => [
-      //   ...prev,
-      //   { prompt, response: res.data.responseText },
-      // ]);
-      setPrompt("");
+      fetchAllData();
 
+      setPrompt("");
+      messageApi.success("prompt sent successfully");
     } catch (err) {
       console.log(err);
+      messageApi.error("Failed to send prompt");
     } finally {
       setLoading(false);
     }
   };
-
-
- const animateResponse = (fullText: string) => {
-  if (typeof fullText !== "string") return;
-
-  const lines = fullText.split("\n");
-  let index = 0;
-
-  const tick = () => {
-    if (index >= lines.length) return;
-
-    const line = lines[index];
-    if (typeof line !== "string") return; // 🔒 HARD STOP
-
-    setChatInfo((prev) => {
-      const updated = [...prev];
-      const lastIndex = updated.length - 1;
-
-      updated[lastIndex] = {
-        ...updated[lastIndex],
-        response:
-          updated[lastIndex].response +
-          (updated[lastIndex].response ? "\n" : "") +
-          line,
-      };
-
-      return updated;
-    });
-
-    index++;
-    setTimeout(tick, 80);
-  };
-
-  tick();
-};
-
 
   useEffect(() => {
     fetchAllData();
   }, []);
 
   const fetchAllData = async () => {
-    const response = await axios.get(
-      "http://localhost:3000/api/gemini/history",
-      { withCredentials: true }
-    );
-    console.log(response);
-    setChatInfo(response.data.data);
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/api/gemini/history",
+        { withCredentials: true }
+      );
+      console.log(response);
+      setChatInfo(response.data.data || []);
+    } catch (err) {
+      console.log(err);
+      messageApi.error("Failed to fetch queries");
+    }
+  };
+
+  // delete prompt
+
+  const handleDeletePrompt = (id: string, promptText: string) => {
+    confirm({
+      title: "Delete chat",
+      icon: <ExclamationCircleFilled />,
+      content: `Are you sure you want to delete: "${promptText.substring(
+        0,
+        50
+      )} ${prompt.length > 50 ? "..." : ""}"`,
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk: async () => {
+        try {
+          const res = await axios.delete(
+            `http://localhost:3000/api/gemini/history/${id}`,
+            { withCredentials: true }
+          );
+          if (res.status === 200) {
+            setChatInfo((prev) => prev.filter((item) => item._id !== id));
+            messageApi.success("Query Deleted successfully");
+          } else {
+            messageApi.error("Failed to delete the chat");
+          }
+        } catch (err: any) {
+          console.log("Error deleting this chat", err);
+        }
+      },
+    });
   };
 
   return (
-    <Flex gap="middle" wrap style={{}}>
-      <Layout style={layoutStyle}>
-        <Layout style={{ height: "100vh" }}>
-          <Sider
-            width="25%"
-            style={siderStyle}
-            className="hidden md:flex w-64 p-4"
-          >
-            <span className="text-lg font-semibold">User Queries History</span>
-            <hr className="my-2" />
+    <>
+      {contextHolder}
+      <Flex className="w-full h-screen">
+        <Layout className="w-full h-screen">
+          <Layout className="h-screen flex">
+            {/* Sidebar */}
+            <Sider
+              width="25%"
+              className="hidden md:flex flex-col bg-[#1b1b1c] text-white"
+            >
+              <div className="p-4 h-full flex flex-col">
+                <h2 className="text-lg font-semibold">User Queries History</h2>
+                <hr className="my-2 border-gray-600" />
 
-            <ul className="flex-1 overflow-y-auto ">
-              {chatInfo && chatInfo.length > 0 ? (
-                chatInfo.map((item, index) => (
-                  <li
-                    key={index}
-                    className="text-[16px] truncate cursor-pointer hover:text-blue-500 "
+                <div className="flex-1 overflow-y-auto mt-4">
+                  {chatInfo && chatInfo.length > 0 ? (
+                    chatInfo.map((item) => (
+                      <div
+                        key={item._id}
+                        className="flex items-center justify-between p-2 hover:bg-gray-800 rounded cursor-pointer group mb-1"
+                      >
+                        <p
+                          className="truncate text-sm text-gray-300 group-hover:text-white flex-1 mr-2"
+                          title={item.prompt}
+                        >
+                          {item.prompt}
+                        </p>
+                        <DeleteOutlined
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeletePrompt(item._id, item.prompt);
+                          }}
+                          className="text-red-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                          title="Delete chat"
+                        />
+                      </div>
+                    ))
+                  ) : (
+                    <span className="text-sm text-gray-500">
+                      Nothing to show here
+                    </span>
+                  )}
+                </div>
+              </div>
+            </Sider>
+
+            {/* Main Content Area */}
+            <Layout className="flex-1 flex flex-col min-h-0 "style={{ height: 'calc(100vh - 80px)' }}>
+              {/* Chat Messages Area */}
+  <Content className="flex-1 overflow-y-auto bg-white p-3 md:p-6">
+                {chatInfo && chatInfo.length > 0 ? (
+                  <div className="space-y-6">
+                    {chatInfo.map((item) => (
+                      <div key={item._id} className="space-y-4">
+                        {/* User Message */}
+                        <div className="flex justify-end">
+                          <div className="max-w-[80%] bg-black text-white px-4 py-2 rounded-2xl text-sm md:text-base">
+                            {item.prompt}
+                          </div>
+                        </div>
+
+                        {/* AI Response */}
+                        <div className="flex justify-start">
+                          <div className="max-w-[80%] bg-gray-100 text-gray-800 px-4 py-3 rounded-2xl text-sm md:text-base shadow-sm">
+                            <ReactMarkdown>{item.response}</ReactMarkdown>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="h-full flex items-center justify-center text-gray-500 text-center text-base md:text-lg">
+                    Welcome to Gemini 2.5 ✨ <br />
+                    How can I help you today?
+                  </div>
+                )}
+              </Content>
+
+              {/* Input Area - Fixed Footer */}
+              <Footer className="bg-[#e7e2e2] p-4 border-t h-[80px] border-gray-300 flex-shrink-0">
+                <div className="flex items-end gap-4 w-full">
+                  <textarea
+                    className="flex-1 min-h-[60px] max-h-[120px] p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows={2}
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
+                    placeholder="Ask anything..."
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        if (prompt.trim()) {
+                          handleSubmit(e as any);
+                        }
+                      }
+                    }}
+                  />
+
+                  <Button
+                    onClick={handleSubmit}
+                    type="primary"
+                    size="large"
+                    disabled={loading || !prompt.trim()}
+                    className="h-[60px] px-6"
                   >
-                    {item.prompt}
-                  </li>
-                ))
-              ) : (
-                <span className="text-sm text-gray-500">
-                  Nothing to show here
-                </span>
-              )}
-            </ul>
-          </Sider>
-
-          <Layout>
-            <Content style={contentStyle} className=" bg-white p-3 md:p-6">
-              {/* Chat Area */}
-
-              {chatInfo && chatInfo.length > 0 ? (
-                <div className="gap-6">
-                  {chatInfo.map((item, index) => (
-                    <div key={index} className="flex flex-col gap-3">
-                      {/* User Message */}
-                      <div className="self-end max-w-[85%] md:max-w-[60%] bg-black text-white px-4 py-2 rounded-2xl text-sm md:text-base">
-                        {item.prompt}
-                      </div>
-
-                      {/* AI Response */}
-                      <div className="self-start max-w-[90%] md:max-w-[70%] bg-[#fff] text-left px-4 py-3 rounded-2xl text-sm md:text-base">
-                        <ReactMarkdown>{item.response}</ReactMarkdown>
-                      </div>
-                    </div>
-                  ))}
+                    {loading ? <Loading /> : "Send"}
+                  </Button>
                 </div>
-              ) : (
-                <div className="h-full flex items-center justify-center text-gray-500 text-center text-base md:text-lg">
-                  Welcome to Gemini 2.5 ✨ <br />
-                  How can I help you today?
-                </div>
-              )}
-            </Content>
-
-            <Footer style={footerStyle}>
-              {/* Input Area */}
-              <textarea
-                className="sm:w-[10rem] md:w-[20rem] lg:w-[30rem] h-12 p-2"
-                rows={2}
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                placeholder="Ask anything..."
-              />
-              <button
-                onClick={handleSubmit}
-                className="rounded-xl h-12 bg-black text-white px-6 py-2 text-sm md:text-base cursor-pointer"
-                disabled={loading}
-              >
-                {loading ? <Loading /> : "Send"}
-              </button>
-
-              {/* <Button onClick={handleSubmit} variant="solid" type="primary" color="geekblue">
-                {loading ?  <Loading />  :  "Send"}
-              </Button> */}
-            </Footer>
+              </Footer>
+            </Layout>
           </Layout>
         </Layout>
-      </Layout>
-    </Flex>
+      </Flex>
+    </>
   );
 };
 

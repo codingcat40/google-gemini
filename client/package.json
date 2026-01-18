@@ -10,8 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ant-design/icons": "^6.1.0",
     "@google/genai": "^1.20.0",
     "@tailwindcss/vite": "^4.1.13",
+    "@types/uuid": "^10.0.0",
     "antd": "^6.2.0",
     "axios": "^1.12.2",
     "react": "^19.1.1",
@@ -19,7 +21,8 @@
     "react-markdown": "^10.1.0",
     "react-router-dom": "^7.9.1",
     "react-toastify": "^11.0.5",
-    "tailwindcss": "^4.1.13"
+    "tailwindcss": "^4.1.13",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.35.0",
