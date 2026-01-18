@@ -146,9 +146,12 @@ const Home = () => {
             </Sider>
 
             {/* Main Content Area */}
-            <Layout className="flex-1 flex flex-col min-h-0 "style={{ height: 'calc(100vh - 80px)' }}>
+            <Layout
+              className="flex-1 flex flex-col min-h-0 "
+              style={{ height: "calc(100vh - 80px)" }}
+            >
               {/* Chat Messages Area */}
-  <Content className="flex-1 overflow-y-auto bg-white p-3 md:p-6">
+              <Content className="flex-1 overflow-y-auto bg-white p-3 md:p-6">
                 {chatInfo && chatInfo.length > 0 ? (
                   <div className="space-y-6">
                     {chatInfo.map((item) => (
