@@ -24,7 +24,6 @@ app.use(cookieParser());
 
 // user router
 app.use('/api/auth', authRoutes)
-
 // home
 app.use("/api/gemini",geminiRoute)
 

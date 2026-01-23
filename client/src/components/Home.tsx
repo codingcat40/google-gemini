@@ -37,7 +37,7 @@ const Home = () => {
         { withCredentials: true }
       );
       fetchAllData();
-
+      console.log(res.data)
       setPrompt("");
       messageApi.success("prompt sent successfully");
     } catch (err) {
