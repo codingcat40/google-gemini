@@ -62,7 +62,7 @@ const Home = () => {
       setChatInfo(response.data.data || []);
     } catch (err) {
       console.log(err);
-      messageApi.error("Failed to fetch queries");
+      messageApi.error(`Failed to fetch queries ${err}`);
     }
   };
 
