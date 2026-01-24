@@ -11,11 +11,43 @@ const app = express();
 const PORT = process.env.PORT || 4000
 
 // middlewares for cors and parsing incoming JSON requests
-app.use(cors({
-    origin: ["http://localhost:5173", "https://noema-ai-9jvr.vercel.app"],
-    methods: ['GET', "POST", 'PUT', 'DELETE'],
-    credentials:  true
-}))
+// app.use(cors({
+//     origin: ["http://localhost:5173", "https://noema-ai-9jvr.vercel.app"],
+//     methods: ['GET', "POST", 'PUT', 'DELETE'],
+//     credentials:  true
+// }))
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://noema-ai.vercel.app", // backend itself if needed
+];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // allow requests with no origin (mobile apps, curl, etc.)
+      if (!origin) return callback(null, true);
+
+      // allow localhost
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      // allow ALL vercel preview URLs for your app
+      if (origin.endsWith(".vercel.app")) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
+  })
+);
+
+app.options("*", cors());
+
+
+
 app.use(express.json())
 app.use(cookieParser());
 
