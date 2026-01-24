@@ -36,7 +36,8 @@ exports.createUser = async (req, res) =>  {
         })
 
         const token = generateToken({userId: user._id});
-        res.cookie("token", token, {httpOnly:true})
+        res.cookie('token', token, {httpOnly: true, secure: true, sameSite: "none", maxAge: 7 *  24 * 60 *  60 * 1000})
+
 
 
         res.status(201).json({message: 'User Registered successfully', userId: user._id})
@@ -67,7 +68,7 @@ exports.login = async (req, res) => {
         }
 
         const token = generateToken({userId: user._id})
-        res.cookie('token', token, {httpOnly: true})
+        res.cookie('token', token, {httpOnly: true, secure: true, sameSite: "none", maxAge: 7 *  24 * 60 *  60 * 1000})
 
         // res.status(200)
         return res.status(200).json({message: 'Login Successful', user:  {
