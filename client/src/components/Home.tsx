@@ -3,7 +3,7 @@ import ReactMarkdown from "react-markdown";
 import Loading from "./Loading";
 import axios from "axios";
 
-import { Button, Flex, Layout, Modal, message, Dropdown } from "antd";
+import { Button, Flex, Layout, Modal, message } from "antd";
 import { DeleteOutlined, ExclamationCircleFilled } from "@ant-design/icons";
 const { Footer, Sider, Content } = Layout;
 const { confirm } = Modal;
