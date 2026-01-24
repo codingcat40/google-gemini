@@ -3,7 +3,7 @@ import ReactMarkdown from "react-markdown";
 import Loading from "./Loading";
 import axios from "axios";
 
-import { Button, Flex, Layout, Modal, message } from "antd";
+import { Button, Flex, Layout, Modal, message, Dropdown } from "antd";
 import { DeleteOutlined, ExclamationCircleFilled } from "@ant-design/icons";
 const { Footer, Sider, Content } = Layout;
 const { confirm } = Modal;
@@ -20,6 +20,13 @@ const Home = () => {
 
   const [chatInfo, setChatInfo] = useState<chatInfo[]>([]);
   const [messageApi, contextHolder] = message.useMessage();
+  const [model, setModel] = useState<string>("gemini");
+
+  // model options
+  // const model_items = [
+  //   {key: '1', label:  'Gemini'},
+  //   {key:  '2',label: 'GPT-4'},
+  // ]
 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -33,11 +40,12 @@ const Home = () => {
         "http://localhost:3000/api/gemini/prompt",
         {
           prompt,
+          model,
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       fetchAllData();
-      console.log(res.data)
+      console.log(res.data);
       setPrompt("");
       messageApi.success("prompt sent successfully");
     } catch (err) {
@@ -56,7 +64,7 @@ const Home = () => {
     try {
       const response = await axios.get(
         "http://localhost:3000/api/gemini/history",
-        { withCredentials: true }
+        { withCredentials: true },
       );
       console.log(response);
       setChatInfo(response.data.data || []);
@@ -74,7 +82,7 @@ const Home = () => {
       icon: <ExclamationCircleFilled />,
       content: `Are you sure you want to delete: "${promptText.substring(
         0,
-        50
+        50,
       )} ${prompt.length > 50 ? "..." : ""}"`,
       okText: "Yes",
       okType: "danger",
@@ -83,7 +91,7 @@ const Home = () => {
         try {
           const res = await axios.delete(
             `http://localhost:3000/api/gemini/history/${id}`,
-            { withCredentials: true }
+            { withCredentials: true },
           );
           if (res.status === 200) {
             setChatInfo((prev) => prev.filter((item) => item._id !== id));
@@ -174,8 +182,8 @@ const Home = () => {
                   </div>
                 ) : (
                   <div className="h-full flex items-center justify-center text-gray-500 text-center text-base md:text-lg">
-                    Welcome to Gemini 2.5 ✨ <br />
-                    How can I help you today?
+                    Welcome to Noema - AI ✨ <br />
+                    How can we help you today?
                   </div>
                 )}
               </Content>
@@ -198,6 +206,16 @@ const Home = () => {
                       }
                     }}
                   />
+
+                  {/* model dropdown */}
+                  <select
+                    value={model}
+                    onChange={(e) => setModel(e.target.value)}
+                  >
+                    <option value="gemini">Gemini</option>
+                    <option value="gpt-4">GPT-4</option>
+                    <option value="claude-3.5">Claude 3.5</option>
+                  </select>
 
                   <Button
                     onClick={handleSubmit}

@@ -6,6 +6,10 @@ const HomeSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
+    model:{
+        type: String,
+        required: true,
+    },
     prompt: {
         type: String,
         required: true,
