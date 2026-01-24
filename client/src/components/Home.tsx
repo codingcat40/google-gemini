@@ -30,7 +30,7 @@ const Home = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:3000/api/gemini/prompt",
+        "https://noema-ai.vercel.app/api/gemini/prompt",
         {
           prompt,
         },
@@ -55,7 +55,7 @@ const Home = () => {
   const fetchAllData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/gemini/history",
+        "https://noema-ai.vercel.app/api/gemini/history",
         { withCredentials: true }
       );
       console.log(response);
@@ -82,7 +82,7 @@ const Home = () => {
       onOk: async () => {
         try {
           const res = await axios.delete(
-            `http://localhost:3000/api/gemini/history/${id}`,
+            `https://noema-ai.vercel.app/api/gemini/history/${id}`,
             { withCredentials: true }
           );
           if (res.status === 200) {
