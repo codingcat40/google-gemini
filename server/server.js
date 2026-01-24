@@ -10,12 +10,13 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 4000
 
-// middlewares for cors and parsing incoming JSON requests
 app.use(cors({
     origin: ["http://localhost:5173", "https://noema-ai-9jvr.vercel.app"],
     methods: ['GET', "POST", 'PUT', 'DELETE'],
     credentials:  true
 }))
+
+// middlewares for cors and parsing incoming JSON requests
 
 app.use(express.json())
 app.use(cookieParser());
