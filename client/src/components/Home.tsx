@@ -37,7 +37,7 @@ const Home = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:3000/api/gemini/prompt",
+        "https://noema-ai.vercel.app/api/gemini/prompt",
         {
           prompt,
           model,
@@ -63,14 +63,14 @@ const Home = () => {
   const fetchAllData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/gemini/history",
-        { withCredentials: true },
+        "https://noema-ai.vercel.app/api/gemini/history",
+        { withCredentials: true }
       );
       console.log(response);
       setChatInfo(response.data.data || []);
     } catch (err) {
       console.log(err);
-      messageApi.error("Failed to fetch queries");
+      messageApi.error(`Failed to fetch queries ${err}`);
     }
   };
 
@@ -90,8 +90,8 @@ const Home = () => {
       onOk: async () => {
         try {
           const res = await axios.delete(
-            `http://localhost:3000/api/gemini/history/${id}`,
-            { withCredentials: true },
+            `https://noema-ai.vercel.app/api/gemini/history/${id}`,
+            { withCredentials: true }
           );
           if (res.status === 200) {
             setChatInfo((prev) => prev.filter((item) => item._id !== id));
