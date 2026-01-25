@@ -215,6 +215,7 @@ const Home = () => {
                     <option value="gemini">Gemini</option>
                     <option value="gpt-4">GPT-4</option>
                     <option value="deepseek">DeepSeek R1T2 Chimera</option>
+                    <option value="Llama">Llama 3.3</option>
                   </select>
 
                   <Button

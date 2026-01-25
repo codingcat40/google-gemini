@@ -1,6 +1,7 @@
 const GeminiModel = require('../models/GeminiModel.js');
 const { callDeepSeek } = require('../service/deepseekService.js');
 const {callGemini} = require('../service/geminiService.js');
+const { callLLama } = require('../service/llamaService.js');
 const { callOpenAI } = require('../service/openAIService.js');
 
 
@@ -30,6 +31,9 @@ module.exports.SendAPIRequest = async (req, res) => {
             case 'deepseek':
                 responseText = await callDeepSeek(prompt)
                 break;
+            case 'Llama':
+                responseText = await callLLama(prompt)
+                break;
             default:
                 return res.status(400).json({log: 'Unsupported Model'})
                 
@@ -50,7 +54,7 @@ module.exports.SendAPIRequest = async (req, res) => {
     }
 }
 
-
+ 
 module.exports.getMyData = async (req, res) => {
     try {   
         const userId = req.userId
