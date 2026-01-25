@@ -63,7 +63,7 @@ const Home = () => {
   const fetchAllData = async () => {
     try {
       const response = await axios.get(
-        "https://noema-ai.vercel.app/api/gemini/history",
+        "http://localhost:3000/api/gemini/history",
         { withCredentials: true }
       );
       console.log(response);
@@ -214,7 +214,7 @@ const Home = () => {
                   >
                     <option value="gemini">Gemini</option>
                     <option value="gpt-4">GPT-4</option>
-                    <option value="claude-3.5">Claude 3.5</option>
+                    <option value="deepseek">DeepSeek R1T2 Chimera</option>
                   </select>
 
                   <Button
