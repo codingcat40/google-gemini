@@ -3,6 +3,8 @@ import ReactMarkdown from "react-markdown";
 import Loading from "./Loading";
 import axios from "axios";
 
+import { useLLM } from "../context/SharedContext";
+
 import { Button, Flex, Layout, Modal, message } from "antd";
 import { DeleteOutlined, ExclamationCircleFilled } from "@ant-design/icons";
 const { Footer, Sider, Content } = Layout;
@@ -17,17 +19,18 @@ const Home = () => {
 
   const [prompt, setPrompt] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-
   const [chatInfo, setChatInfo] = useState<chatInfo[]>([]);
   const [messageApi, contextHolder] = message.useMessage();
   const [model, setModel] = useState<string>("gemini");
 
-  // model options
-  // const model_items = [
-  //   {key: '1', label:  'Gemini'},
-  //   {key:  '2',label: 'GPT-4'},
-  // ]
+  const { selectedRole } = useLLM();
 
+  // rendering
+  useEffect(() => {
+    fetchAllData();
+  }, []);
+
+  // send API request
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (prompt.trim().length === 0) {
@@ -37,34 +40,33 @@ const Home = () => {
 
     try {
       const res = await axios.post(
-        "https://noema-ai.vercel.app/api/gemini/prompt",
+        "http://localhost:3000/api/gemini/prompt",
         {
           prompt,
           model,
+          selectedRole,
         },
         { withCredentials: true },
       );
       fetchAllData();
       console.log(res.data);
+      console.log("Role:  ", selectedRole);
       setPrompt("");
       messageApi.success("prompt sent successfully");
     } catch (err) {
       console.log(err);
+      console.log("Role:  ", selectedRole, typeof selectedRole);
       messageApi.error("Failed to send prompt");
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchAllData();
-  }, []);
-
   const fetchAllData = async () => {
     try {
       const response = await axios.get(
         "http://localhost:3000/api/gemini/history",
-        { withCredentials: true }
+        { withCredentials: true },
       );
       console.log(response);
       setChatInfo(response.data.data || []);
@@ -90,8 +92,8 @@ const Home = () => {
       onOk: async () => {
         try {
           const res = await axios.delete(
-            `https://noema-ai.vercel.app/api/gemini/history/${id}`,
-            { withCredentials: true }
+            `http://localhost:3000/api/gemini/history/${id}`,
+            { withCredentials: true },
           );
           if (res.status === 200) {
             setChatInfo((prev) => prev.filter((item) => item._id !== id));
@@ -109,9 +111,9 @@ const Home = () => {
   return (
     <>
       {contextHolder}
-      <Flex className="w-full h-screen">
-        <Layout className="w-full h-screen">
-          <Layout className="h-screen flex">
+      <Flex className="w-full">
+        <Layout className="w-full">
+          <Layout className=" flex h-screen">
             {/* Sidebar */}
             <Sider
               width="25%"
@@ -155,11 +157,10 @@ const Home = () => {
 
             {/* Main Content Area */}
             <Layout
-              className="flex-1 flex flex-col min-h-0 "
-              style={{ height: "calc(100vh - 80px)" }}
+              className="flex-1 flex flex-col h-screen"
             >
               {/* Chat Messages Area */}
-              <Content className="flex-1 overflow-y-auto bg-white p-3 md:p-6">
+              <Content className="flex-1 overflow-y-auto bg-[#212121] p-3 md:p-6">
                 {chatInfo && chatInfo.length > 0 ? (
                   <div className="space-y-6">
                     {chatInfo.map((item) => (
@@ -173,8 +174,36 @@ const Home = () => {
 
                         {/* AI Response */}
                         <div className="flex justify-start">
-                          <div className="max-w-[80%] bg-gray-100 text-gray-800 px-4 py-3 rounded-2xl text-sm md:text-base shadow-sm">
-                            <ReactMarkdown>{item.response}</ReactMarkdown>
+                          <div className="max-w-[90%] md:max-w-[800px] px-4 py-3 rounded-2xl shadow-sm overflow-hidden">
+                            <div className="text-white text-sm md:text-base whitespace-pre-wrap break-words break-all">
+                              <ReactMarkdown
+                                components={{
+                                  pre: ({ node, ...props }) => (
+                                    <pre
+                                      {...props}
+                                      className="whitespace-pre-wrap break-words overflow-hidden"
+                                    />
+                                  ),
+                                  code: ({ node, inline, ...props }) =>
+                                    inline ? (
+                                      <code {...props} className="break-all" />
+                                    ) : (
+                                      <code
+                                        {...props}
+                                        className="block whitespace-pre-wrap break-words"
+                                      />
+                                    ),
+                                  a: ({ node, ...props }) => (
+                                    <a
+                                      {...props}
+                                      className="break-all underline"
+                                    />
+                                  ),
+                                }}
+                              >
+                                {item.response}
+                              </ReactMarkdown>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -189,10 +218,13 @@ const Home = () => {
               </Content>
 
               {/* Input Area - Fixed Footer */}
-              <Footer className="bg-[#e7e2e2] p-4 border-t h-[80px] border-gray-300 flex-shrink-0">
+              <Footer
+                className="m-0 flex-shrink-1"
+                style={{ backgroundColor: "#000", color: '#fff', paddingBottom: '90px' }}
+              >
                 <div className="flex items-end gap-4 w-full">
                   <textarea
-                    className="flex-1 min-h-[60px] max-h-[120px] p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
                     rows={2}
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}

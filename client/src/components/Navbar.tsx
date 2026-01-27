@@ -2,15 +2,33 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 
-import { Button, Flex, Modal } from "antd";
-import { LogoutOutlined } from "@ant-design/icons";
+import { Button, Flex, Modal,Dropdown, Space } from "antd";
+import type { MenuProps } from "antd";
+import { InfoCircleOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
+
+
+import { useLLM } from "../context/SharedContext";
+
 const {confirm} = Modal;
+
+
+
 
 const Navbar = () => {
   const navigate = useNavigate();
   const { setUser, user, loading } = useAuth();
+  const { setSelectedRole} = useLLM()
+
 
   if (loading) return null;
+
+
+  const RoleItems: MenuProps['items'] = [
+      {key: '0', label:  'System', onClick:  () => setSelectedRole('system')},
+      {key: '1', label: 'Developer', onClick:  () => setSelectedRole('developer')},
+      {key: '2', label: 'Assistant', onClick:  () => setSelectedRole('assistant')},
+      {key: '3', label:  'User', onClick:  () => setSelectedRole('user')},
+  ]
 
   const handleLogout = async () =>   {
     confirm({
@@ -22,7 +40,7 @@ const Navbar = () => {
       okType:  'danger',
       onOk:  async () => {
         try{
-          await axios.post("https://noema-ai.vercel.app/api/auth/logout",{},{withCredentials:true})
+          await axios.post("http://localhost:3000/api/auth/logout",{},{withCredentials:true})
           setUser(null);
           navigate("/")
         }
@@ -34,24 +52,81 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="sticky top-0 left-0 text-lg w-full flex items-center justify-end bg-black/90 text-white shadow-2xl z-50 h-18">
-      <Flex gap={12} align="flex-end" wrap>
-       
+  
+  <nav className="sticky top-0 left-0 w-full bg-gray-900 text-white shadow-2xl z-50 h-14 border-b border-gray-800">
+  <div className="h-full px-6">
+    <Flex 
+      justify="space-between" 
+      align="center" 
+      className="h-full"
+      wrap="nowrap"
+    >
+      {/* Left side: App title */}
+      <div className="flex items-center">
+        <div 
+          className="flex flex-row gap-3"
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <circle cx="10" cy="10" r="8" stroke="#1890ff" stroke-width="1.2"/>
+          <path d="M10,2 C14,10 14,10 10,18 C6,10 6,10 10,2" stroke="#722ed1" stroke-width="2.5"/>
+          </svg>
+          <span>
+          Noema.AI
+          </span>
+        </div>
 
-        <Button color="blue" variant="filled">
-          <Link to="/about">About Developer</Link>
+        {/* collapsible feature button here */}
+      </div>
+
+      {/* Center: Role selector (only when user exists) */}
+      {user && (
+        <div className="flex-1 flex justify-end">
+          <Dropdown 
+            menu={{ items: RoleItems }} 
+            trigger={['click']}
+            placement="bottom"
+          >
+            <Button 
+              type="link" 
+              size="middle"
+              className="min-w-1"
+            >
+              <Space>
+                <UserOutlined />
+                Toggle Role
+              </Space>
+            </Button>
+          </Dropdown>
+        </div>
+      )}
+
+      {/* Right side: Actions */}
+      <Flex align="center" gap={12}>
+        {/* About Developer button */}
+        <Button 
+          type="primary" 
+          className="text-white hover:text-blue-400"
+        >
+          <Link to="/about" className="flex items-center gap-2">
+            <InfoCircleOutlined />
+            <span className="hidden sm:inline">About Developer</span>
+          </Link>
         </Button>
 
-        {console.log("NAVBAR USER:", user)}
-        {console.log("BOOLEAN(user):", Boolean(user))}
-
-        {user && (
-          <Button onClick={handleLogout} type="primary" size="middle" color="danger" variant="solid" >
-            Logout
-          </Button>
-        )}
+        {/* Logout button */}
+        <Button 
+          onClick={handleLogout} 
+          type="primary" 
+          danger
+          icon={<LogoutOutlined />}
+          className="flex items-center gap-2"
+        >
+          <span className="hidden sm:inline">Logout</span>
+        </Button>
       </Flex>
-    </nav>
+    </Flex>
+  </div>
+</nav>
   );
 };
 

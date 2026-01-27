@@ -17,6 +17,10 @@ const HomeSchema = new mongoose.Schema({
     response: {
         type: String,
         required: true,
+    },
+    selectedRole: {
+        type: String,
+        required: true,
     }
 }, {timestamps: true})
 
