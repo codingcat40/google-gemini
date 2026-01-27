@@ -16,6 +16,7 @@ app.use(cors({
     credentials:  true
 }))
 
+
 // middlewares for cors and parsing incoming JSON requests
 
 app.use(express.json())
