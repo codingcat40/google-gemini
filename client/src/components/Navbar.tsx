@@ -114,7 +114,9 @@ const Navbar = () => {
         </Button>
 
         {/* Logout button */}
-        <Button 
+        
+        {
+          user && <Button 
           onClick={handleLogout} 
           type="primary" 
           danger
@@ -123,6 +125,8 @@ const Navbar = () => {
         >
           <span className="hidden sm:inline">Logout</span>
         </Button>
+        }
+        
       </Flex>
     </Flex>
   </div>
