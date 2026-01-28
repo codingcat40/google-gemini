@@ -195,31 +195,7 @@ const Home = () => {
                         <div className="flex justify-start">
                           <div className="max-w-[90%] md:max-w-[800px] px-4 py-3 rounded-2xl shadow-sm overflow-hidden">
                             <div className="text-white text-sm md:text-base whitespace-pre-wrap break-words break-all">
-                              <ReactMarkdown
-                                components={{
-                                  pre: ({ node, ...props }) => (
-                                    <pre
-                                      {...props}
-                                      className="whitespace-pre-wrap break-words overflow-hidden"
-                                    />
-                                  ),
-                                  code: ({ node, inline, ...props }) =>
-                                    inline ? (
-                                      <code {...props} className="break-all" />
-                                    ) : (
-                                      <code
-                                        {...props}
-                                        className="block whitespace-pre-wrap break-words"
-                                      />
-                                    ),
-                                  a: ({ node, ...props }) => (
-                                    <a
-                                      {...props}
-                                      className="break-all underline"
-                                    />
-                                  ),
-                                }}
-                              >
+                              <ReactMarkdown>
                                 {item.response}
                               </ReactMarkdown>
                             </div>
