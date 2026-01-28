@@ -3,10 +3,14 @@ import ReactMarkdown from "react-markdown";
 import Loading from "./Loading";
 import axios from "axios";
 
-import { Button, Flex, Layout, Modal, message } from "antd";
+import { useLLM } from "../context/SharedContext";
+
+import { Button, Flex, Layout, Modal, message, notification } from "antd";
 import { DeleteOutlined, ExclamationCircleFilled } from "@ant-design/icons";
 const { Footer, Sider, Content } = Layout;
 const { confirm } = Modal;
+
+type NotificationType = "warning";
 
 const Home = () => {
   type chatInfo = {
@@ -17,13 +21,39 @@ const Home = () => {
 
   const [prompt, setPrompt] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-
   const [chatInfo, setChatInfo] = useState<chatInfo[]>([]);
   const [messageApi, contextHolder] = message.useMessage();
+  const [model, setModel] = useState<string>("gemini");
 
+  const { selectedRole } = useLLM();
+
+  const [api, warningContext] = notification.useNotification();
+  const openNotificationWithIcon = (
+    type: NotificationType,
+    message: string,
+    title: string,
+  ) => {
+    api[type]({
+      title: `${title}`,
+      description: `${message}`,
+      duration: 10,
+    });
+  };
+
+  // rendering
+  useEffect(() => {
+    fetchAllData();
+  }, []);
+
+  // send API request
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (prompt.trim().length === 0) {
+      openNotificationWithIcon(
+        "warning",
+        "Please Enter the Prompt",
+        "Empty Fields",
+      );
       return;
     }
     setLoading(true);
@@ -33,30 +63,30 @@ const Home = () => {
         "https://noema-ai.vercel.app/api/gemini/prompt",
         {
           prompt,
+          model,
+          selectedRole,
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       fetchAllData();
-      console.log(res.data)
+      console.log(res.data);
+      console.log("Role:  ", selectedRole);
       setPrompt("");
       messageApi.success("prompt sent successfully");
     } catch (err) {
       console.log(err);
+      console.log("Role:  ", selectedRole, typeof selectedRole);
       messageApi.error("Failed to send prompt");
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchAllData();
-  }, []);
-
   const fetchAllData = async () => {
     try {
       const response = await axios.get(
         "https://noema-ai.vercel.app/api/gemini/history",
-        { withCredentials: true }
+        { withCredentials: true },
       );
       console.log(response);
       setChatInfo(response.data.data || []);
@@ -74,7 +104,7 @@ const Home = () => {
       icon: <ExclamationCircleFilled />,
       content: `Are you sure you want to delete: "${promptText.substring(
         0,
-        50
+        50,
       )} ${prompt.length > 50 ? "..." : ""}"`,
       okText: "Yes",
       okType: "danger",
@@ -83,7 +113,7 @@ const Home = () => {
         try {
           const res = await axios.delete(
             `https://noema-ai.vercel.app/api/gemini/history/${id}`,
-            { withCredentials: true }
+            { withCredentials: true },
           );
           if (res.status === 200) {
             setChatInfo((prev) => prev.filter((item) => item._id !== id));
@@ -101,9 +131,10 @@ const Home = () => {
   return (
     <>
       {contextHolder}
-      <Flex className="w-full h-screen">
-        <Layout className="w-full h-screen">
-          <Layout className="h-screen flex">
+      {warningContext}
+      <Flex className="w-full">
+        <Layout className="w-full">
+          <Layout className=" flex h-screen">
             {/* Sidebar */}
             <Sider
               width="25%"
@@ -146,12 +177,9 @@ const Home = () => {
             </Sider>
 
             {/* Main Content Area */}
-            <Layout
-              className="flex-1 flex flex-col min-h-0 "
-              style={{ height: "calc(100vh - 80px)" }}
-            >
+            <Layout className="flex-1 flex flex-col h-screen">
               {/* Chat Messages Area */}
-              <Content className="flex-1 overflow-y-auto bg-white p-3 md:p-6">
+              <Content className="flex-1 overflow-y-auto bg-[#212121] p-3 md:p-6">
                 {chatInfo && chatInfo.length > 0 ? (
                   <div className="space-y-6">
                     {chatInfo.map((item) => (
@@ -165,8 +193,12 @@ const Home = () => {
 
                         {/* AI Response */}
                         <div className="flex justify-start">
-                          <div className="max-w-[80%] bg-gray-100 text-gray-800 px-4 py-3 rounded-2xl text-sm md:text-base shadow-sm">
-                            <ReactMarkdown>{item.response}</ReactMarkdown>
+                          <div className="max-w-[90%] md:max-w-[800px] px-4 py-3 rounded-2xl shadow-sm overflow-hidden">
+                            <div className="text-white text-sm md:text-base whitespace-pre-wrap break-words break-all">
+                              <ReactMarkdown>
+                                {item.response}
+                              </ReactMarkdown>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -174,17 +206,20 @@ const Home = () => {
                   </div>
                 ) : (
                   <div className="h-full flex items-center justify-center text-gray-500 text-center text-base md:text-lg">
-                    Welcome to Gemini 2.5 ✨ <br />
-                    How can I help you today?
+                    Welcome to Noema - AI ✨ <br />
+                    How can we help you today?
                   </div>
                 )}
               </Content>
 
               {/* Input Area - Fixed Footer */}
-              <Footer className="bg-[#e7e2e2] p-4 border-t h-[80px] border-gray-300 flex-shrink-0">
-                <div className="flex items-end gap-4 w-full">
+              <Footer className="!bg-black text-white p-3 md:p-4 border-t border-gray-700" style={{paddingBottom: '70px'}}>
+                <div className="flex flex-col gap-3 md:flex-row md:items-end md:gap-4 w-full">
+                  {/* Textarea */}
                   <textarea
-                    className="flex-1 min-h-[60px] max-h-[120px] p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full md:flex-1 p-3 border border-gray-600 bg-black text-white rounded-lg resize-none
+                 focus:outline-none focus:ring-2 focus:ring-blue-500
+                 text-sm md:text-base"
                     rows={2}
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
@@ -199,15 +234,39 @@ const Home = () => {
                     }}
                   />
 
-                  <Button
-                    onClick={handleSubmit}
-                    type="primary"
-                    size="large"
-                    disabled={loading || !prompt.trim()}
-                    className="h-[60px] px-6"
-                  >
-                    {loading ? <Loading /> : "Send"}
-                  </Button>
+                  {/* Controls row (mobile) */}
+                  <div className="flex items-center justify-between gap-3 md:gap-4">
+                    {/* Model select */}
+                    <select
+                      className="bg-black border border-gray-600 text-white rounded-md px-3 py-2
+                   text-sm cursor-pointer focus:outline-none"
+                      value={model}
+                      onChange={(e) => setModel(e.target.value)}
+                    >
+                      <option value="gemini" className="bg-gray-800">
+                        Gemini
+                      </option>
+                      <option value="gpt-4" className="bg-gray-800">
+                        GPT-4
+                      </option>
+                      <option value="deepseek" className="bg-gray-800">
+                        DeepSeek R1T2
+                      </option>
+                      <option value="Llama" className="bg-gray-800">
+                        Llama 3.3
+                      </option>
+                    </select>
+
+                    {/* Send button */}
+                    <Button
+                      onClick={handleSubmit}
+                      type={!prompt.trim() ? "default" : "primary"}
+                      size="middle"
+                      className="px-4 py-2 md:h-[60px] md:px-6"
+                    >
+                      {loading ? <Loading /> : "Send"}
+                    </Button>
+                  </div>
                 </div>
               </Footer>
             </Layout>
