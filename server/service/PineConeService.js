@@ -20,7 +20,7 @@ const result = await index.query({
     console.log("contexts: ", contexts);
     return contexts;
   } catch (err) {
-    console.error("🔴 Pinecone query error:", err);
+    console.error("Pinecone query error:", err);
     return [];
   }
 };

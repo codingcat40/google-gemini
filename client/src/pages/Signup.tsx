@@ -130,7 +130,7 @@ export const Signup = () => {
           </Button>
           <p className="text-white font-serif">
             Are You existing User?! You can Sign In{" "}
-            <span className="text-blue-500 cursor-pointer text-lg" onClick={() => navigate('/')}>Here</span>{" "}
+            <span className="text-blue-500 cursor-pointer text-lg" onClick={() => navigate('/login')}>Here</span>{" "}
           </p>
         </form>
       </div>

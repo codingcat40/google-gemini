@@ -60,7 +60,7 @@ const Navbar = () => {
       wrap="nowrap"
     >
       {/* Left side: App title */}
-      <div className="flex items-center">
+      <div className="flex items-center" onClick={() => navigate('/')}>
         <div 
           className="flex flex-row gap-3"
         >

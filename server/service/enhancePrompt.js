@@ -6,7 +6,7 @@ const {
   buildEnhancedPrompt,
 } = require("./PineConeService");
 
-/* ---------------- FACT EXTRACTOR ---------------- */
+// fact extraction 
 
 async function extractFactsLLM(userPrompt) {
   const extractorPrompt = `
@@ -45,7 +45,6 @@ Return ONLY valid JSON as an array of strings.
   }
 }
 
-/* ---------------- MEMORY STORE ---------------- */
 
 async function persistMemory(userId, facts) {
   for (const fact of facts) {
@@ -53,7 +52,6 @@ async function persistMemory(userId, facts) {
   }
 }
 
-/* ---------------- MAIN CHAT ---------------- */
 
 module.exports.enhancedChat = async (userId, userPrompt, role, model) => {
   // Retrieve EXISTING memory
@@ -62,10 +60,9 @@ module.exports.enhancedChat = async (userId, userPrompt, role, model) => {
   // Extract NEW facts from this message
   const newFacts = await extractFactsLLM(userPrompt);
 
-  // Merge memory (dedupe)
+  // Merge memory
   const allFacts = Array.from(new Set([...existingMemory, ...newFacts]));
 
-  //  Build prompt with FULL memory
   const enhancedPrompt = buildEnhancedPrompt(allFacts, userPrompt);
 
   console.log("Injected memory:", allFacts);
@@ -90,7 +87,6 @@ module.exports.enhancedChat = async (userId, userPrompt, role, model) => {
       throw new Error("Unsupported model");
   }
 
-  // 5️⃣ Persist ONLY new facts
   await persistMemory(userId, newFacts);
 
   return response;

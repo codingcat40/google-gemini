@@ -14,7 +14,7 @@ type NotificationType = "warning";
 
 const Home = () => {
   type chatInfo = {
-    _id: string; // backend using _id
+    _id: string;
     prompt: string;
     response: string;
   };
