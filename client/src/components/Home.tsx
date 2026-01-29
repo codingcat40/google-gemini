@@ -60,7 +60,7 @@ const Home = () => {
 
     try {
       const res = await axios.post(
-        "https://noema-ai.vercel.app/api/gemini/prompt",
+        "http://localhost:3000/api/gemini/prompt",
         {
           prompt,
           model,
@@ -74,9 +74,17 @@ const Home = () => {
       setPrompt("");
       messageApi.success("prompt sent successfully");
     } catch (err) {
-      console.log(err);
-      console.log("Role:  ", selectedRole, typeof selectedRole);
-      messageApi.error("Failed to send prompt");
+
+      if(axios.isAxiosError(err)){
+        
+        const message = err.response?.data?.err?.error?.message
+        // console.log(err);
+        // console.log("Role:  ", selectedRole, typeof selectedRole);
+        
+        messageApi.error(message)
+        
+      }
+      
     } finally {
       setLoading(false);
     }
@@ -85,7 +93,7 @@ const Home = () => {
   const fetchAllData = async () => {
     try {
       const response = await axios.get(
-        "https://noema-ai.vercel.app/api/gemini/history",
+        "http://localhost:3000/api/gemini/history",
         { withCredentials: true },
       );
       console.log(response);
@@ -112,7 +120,7 @@ const Home = () => {
       onOk: async () => {
         try {
           const res = await axios.delete(
-            `https://noema-ai.vercel.app/api/gemini/history/${id}`,
+            `http://localhost:3000/api/gemini/history/${id}`,
             { withCredentials: true },
           );
           if (res.status === 200) {

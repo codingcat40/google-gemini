@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 import { Button, notification } from "antd";
+import Logo from "../assets/Logo";
 
 type NotificationType =  "error" | "warning";
 
@@ -28,7 +29,7 @@ export const Login = () => {
   const sendRequest = async () => {
     try {
       const res = await axios.post(
-        "https://noema-ai.vercel.app/api/auth/login",
+        "http://localhost:3000/api/auth/login",
         { username, password },
         { withCredentials: true }
       );
@@ -58,13 +59,14 @@ export const Login = () => {
 
   return (
     <div
-      className="flex pt-14 items-center justify-center min-h-screen z-10 overflow-hidden bg-cover bg-center"
-      style={{ backgroundImage: "url('/Logo.webp')", backgroundSize: "cover" }}
-    >
+      className="flex pt-14 items-center justify-center min-h-screen z-10 overflow-hidden bg-cover bg-center"    >
+      <div className="absolute inset-0 z-0" style={{backgroundSize:"cover"}}>
+        <Logo />
+      </div>
       {contextHolder}
       <div className="w-full max-w-[420px] min-w-[120px] p-8 max-h-[455px] rounded-2xl shadow-lg  backdrop-blur-2xl m-8">
         <h2 className="text-2xl font-semibold text-white mb-6 text-center">
-          Please Login here :)
+          Welcome back
         </h2>
 
         <form className="flex flex-col space-y-5">

@@ -4,10 +4,10 @@ import axios from "axios";
 
 
 import { Button, notification } from "antd";
+import Logo from "../assets/Logo";
 
 type NotificationType =  "error" | "warning";
 
-// const {Text, Link} = Typography;
 
 export const Signup = () => {
   const [username, setUsername] = useState<string>("");
@@ -29,7 +29,7 @@ export const Signup = () => {
     };
 
   const sendRequest = async () =>  {
-    axios.post("https://noema-ai.vercel.app/api/auth/createuser", {
+    axios.post("http://localhost:3000/api/auth/createuser", {
       username,
       email,
       password,
@@ -63,12 +63,14 @@ export const Signup = () => {
   return (
     <div
       className="flex pt-14 items-center justify-center z-10 h-screen overflow-y-hidden bg-cover bg-center"
-      style={{ backgroundImage: "url('/Logo.webp')" }}
     >
+      <div className="absolute inset-0 z-0" style={{backgroundSize:"cover"}}>
+        <Logo />
+      </div>
       {contextHolder}
       <div className="w-full max-w-[420px] min-w-[120px] p-8 max-h-[455px] rounded-2xl shadow-lg  backdrop-blur-2xl m-8">
         <h2 className="text-2xl font-semibold text-white mb-6 text-center">
-          Hello there :)
+          Welcome 
         </h2>
 
         <form className="flex flex-col space-y-5">
