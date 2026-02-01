@@ -187,7 +187,7 @@ const Home = () => {
               width={250}
               className="hidden md:flex flex-col text-white"
             >
-              <div className="p-4 h-full flex flex-col">
+              <div className="px-4 py-12 h-full flex flex-col">
                 <h2 className="text-sm font-normal px-8">Chat Queries</h2>
                 <hr className="my-2 border-gray-600" />
 
@@ -302,7 +302,7 @@ const Home = () => {
                   lg:max-w-[75vw] 
                   md:max-w-[65vw]
                   sm:max-w-[60vw] 
-                  px-4"
+                  py-14"
                 >
                   {chatInfo && chatInfo.length > 0 ? (
                     <div className="space-y-6">
