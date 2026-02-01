@@ -1,13 +1,13 @@
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function Landing() {
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
 
   return (
-    <main className=" bg-black text-white">
+    <main className=" bg-black text-white h-screen">
       
       {/* HERO */}
-      {/* <section className="relative min-h-[90vh] flex items-center justify-center px-6">
+      <section className="relative min-h-[90vh] flex items-center justify-center px-6">
         <div className="max-w-5xl text-center">
           <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-tight">
             Think Better.
@@ -30,7 +30,7 @@ export default function Landing() {
             </button>
           </div>
         </div>
-      </section> */}
+      </section>
 
       </main>
   )}
