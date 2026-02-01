@@ -7,6 +7,7 @@ import { Login } from "./pages/Login";
 import { Signup } from "./pages/Signup";
 import { AuthProvider } from "./context/AuthContext";
 import { LLMProvider } from "./context/SharedContext";
+import LandingPage from "./components/LandingPage";
 
 function App() {
   return(
@@ -17,7 +18,8 @@ function App() {
 
 
             <Routes>
-              <Route path="/" element={<Login />} />
+              <Route path="/" element={<LandingPage />}/>
+              <Route path="/login" element={<Login />} />
               <Route path="/home" element= {<Home />}/>
               <Route path="/about" element = {<About />}/>
               <Route path="/signup" element={<Signup />} />

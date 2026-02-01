@@ -6,3 +6,53 @@ body,
   height: 100%;
   overflow: hidden;
 }
+
+/* ===============================
+   Custom Dark Scrollbar
+   =============================== */
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #3a3a3a #121212;
+}
+
+/* Chrome, Edge, Safari */
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #121212;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #3a3a3a;
+  border-radius: 9999px;
+  transition: background-color 0.2s ease;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #555555;
+}
+
+.dark-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.dark-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.35);
+}
+
+
+/* highlight */
+
+.chat-highlight {
+  animation: highlightFade 2s ease;
+}
+
+@keyframes highlightFade {
+  0% { background-color: rgba(59,130,246,0.25); }
+  100% { background-color: transparent; }
+}

@@ -12,6 +12,7 @@
   "dependencies": {
     "@google/genai": "^1.35.0",
     "@openrouter/sdk": "^0.4.0",
+    "@pinecone-database/pinecone": "^6.1.4",
     "axios": "^1.13.2",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",

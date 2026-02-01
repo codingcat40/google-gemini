@@ -12,8 +12,6 @@ import { useLLM } from "../context/SharedContext";
 const {confirm} = Modal;
 
 
-
-
 const Navbar = () => {
   const navigate = useNavigate();
   const { setUser, user, loading } = useAuth();
@@ -40,7 +38,7 @@ const Navbar = () => {
       okType:  'danger',
       onOk:  async () => {
         try{
-          await axios.post("https://noema-ai.vercel.app/api/auth/logout",{},{withCredentials:true})
+          await axios.post("http://localhost:3000/api/auth/logout",{},{withCredentials:true})
           setUser(null);
           navigate("/")
         }
@@ -53,7 +51,7 @@ const Navbar = () => {
 
   return (
   
-  <nav className="sticky top-0 left-0 w-full bg-gray-900 text-white shadow-2xl z-50 h-14 border-b border-gray-800">
+  <nav className="sticky top-0 left-0 w-full bg-black text-white shadow-2xl z-50 h-14 border-b border-gray-800">
   <div className="h-full px-6">
     <Flex 
       justify="space-between" 
@@ -62,13 +60,13 @@ const Navbar = () => {
       wrap="nowrap"
     >
       {/* Left side: App title */}
-      <div className="flex items-center">
+      <div className="flex items-center" onClick={() => navigate('/')}>
         <div 
           className="flex flex-row gap-3"
         >
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <circle cx="10" cy="10" r="8" stroke="#1890ff" stroke-width="1.2"/>
-          <path d="M10,2 C14,10 14,10 10,18 C6,10 6,10 10,2" stroke="#722ed1" stroke-width="2.5"/>
+          <circle cx="10" cy="10" r="8" stroke="#1890ff" strokeWidth="1.2"/>
+          <path d="M10,2 C14,10 14,10 10,18 C6,10 6,10 10,2" stroke="#722ed1" strokeWidth="2.5"/>
           </svg>
           <span>
           Noema.AI

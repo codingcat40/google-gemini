@@ -1,6 +1,5 @@
 const GeminiModel = require('../models/GeminiModel.js');
-const {callGemini} = require('../service/geminiService.js');
-const {callLLama, callDeepSeek, callOpenAI} = require('../service/LLMService.js')
+const { enhancedChat } = require('../service/enhancePrompt.js');
 
 
 module.exports.SendAPIRequest = async (req, res) => {
@@ -19,25 +18,7 @@ module.exports.SendAPIRequest = async (req, res) => {
 
         const userId = req.userId;
         console.log(userId)
-        let responseText = ''
-        switch(model){
-            case 'gemini':
-                responseText = await callGemini(prompt, selectedRole)
-                break;
-            case 'gpt-4':
-                responseText = await callOpenAI(prompt, selectedRole)
-                break;
-            case 'deepseek':
-                responseText = await callDeepSeek(prompt, selectedRole)
-                break;
-            case 'Llama':
-                responseText = await callLLama(prompt, selectedRole)
-                break;
-            default:
-                return res.status(400).json({log: 'More models upcoming...'})
-                
-
-        }
+        let responseText  = await enhancedChat(userId, prompt, selectedRole, model)
 
         console.log(responseText)
         const record = await GeminiModel.create({
@@ -50,6 +31,7 @@ module.exports.SendAPIRequest = async (req, res) => {
 
          res.status(201).json({message: "Prompt has been sent", responseText});
     }catch(err){
+
         res.status(500).json({message: "error creating gemini request!", err})
     }
 }
