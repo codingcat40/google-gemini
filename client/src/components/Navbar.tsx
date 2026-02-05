@@ -69,7 +69,7 @@ const Navbar = () => {
           <path d="M10,2 C14,10 14,10 10,18 C6,10 6,10 10,2" stroke="#722ed1" strokeWidth="2.5"/>
           </svg>
           <span>
-          Noema.AI
+          Memora.AI
           </span>
         </div>
 

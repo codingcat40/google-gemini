@@ -8,7 +8,7 @@ import Logo from "../assets/Logo";
 
 type NotificationType =  "error" | "warning";
 
-export const Login = () => {
+export const Login = ({setuser}: {setuser:  (u:  any) => void}) => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const { setUser } = useAuth();
@@ -35,8 +35,10 @@ export const Login = () => {
       );
 
       setUser(res.data.user);
+      setuser(res.data.user);
+
       console.log("Login page data", res.data.user);
-      navigate("/home");
+      navigate("/home", {replace:   true});
     } catch (err) {
       openNotificationWithIcon('error', `Incorrect Username or Password`,'Error')
       console.log('Login Error: ' +  err);
