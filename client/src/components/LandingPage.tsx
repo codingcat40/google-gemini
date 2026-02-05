@@ -17,7 +17,7 @@ export default function Landing() {
           </h1>
 
           <p className="mt-6 text-lg md:text-xl text-slate-600 max-w-2xl mx-auto">
-            Noema AI optimizes prompts using structured memory, intent-aware reasoning, and intelligent refinement.
+            Memora AI optimizes prompts using structured memory, intent-aware reasoning, and intelligent refinement.
           </p>
 
           <div className="mt-10 flex justify-center gap-4">

@@ -332,7 +332,7 @@ const Home = () => {
                     </div>
                   ) : (
                     <div className="h-full flex items-center justify-center text-gray-500 text-center text-base md:text-lg">
-                      Welcome to Noema - AI ✨ <br />
+                      Welcome to Memora - AI ✨ <br />
                       How can we help you today?
                     </div>
                   )}
